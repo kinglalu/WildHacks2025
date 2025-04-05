@@ -1,30 +1,12 @@
 #include <iostream>
-#include <iomanip>
 #include <string>
-#include <vector>
-#include <cstdlib>
-#include <ctime>
-#include <cmath>
-#include <limits>
 
-using namespace std;
-
-// Utility functions for input validation
-void clearInputBuffer() {
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+void sendLink() {
+    std::string link = "https://www.youtube.com/watch?v=3xWJ0FSgJVE";
+    std::cout << "Here's our project :) " << link << std::endl;
 }
 
-int getUserChoice(int min, int max) {
-    int choice;
-    while (true) {
-        cout << "Enter your choice (" << min << "-" << max << "): ";
-        if (cin >> choice && choice >= min && choice <= max) {
-            clearInputBuffer();
-            return choice;
-        } else {
-            cout << "Invalid input. Please try again." << endl;
-            clearInputBuffer();
-        }
-    }
+int main() {
+    sendLink();  // Call the function to display the link
+    return 0;
 }
