@@ -13,9 +13,19 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
 
+
+class Listing(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    image_link = db.Column(db.String(200), nullable=False)
+    username = db.Column(db.String(80), nullable=False)  # To associate the listing with the user
+
+
 @app.route("/")
 def login_page():
     return render_template("login.html")
+
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -29,7 +39,7 @@ def login():
         flash("Invalid login credentials")
         return redirect(url_for("login_page"))
 
-@app.route("/register", methods=["GET", "POST"])
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -49,9 +59,26 @@ def register():
 
     return render_template("register.html")
 
-@app.route("/welcome/<username>")
+
+@app.route("/welcome/<username>", methods=["GET", "POST"])
 def welcome(username):
-    return render_template("welcome.html", username=username)
+    if request.method == "POST":
+        name = request.form["name"]
+        description = request.form["description"]
+        image_link = request.form["image_link"]
+
+        new_listing = Listing(name=name, description=description, image_link=image_link, username=username)
+        db.session.add(new_listing)
+        db.session.commit()
+        flash("Listing published successfully!")
+
+    listings = Listing.query.filter_by(username=username).all()
+    return render_template("welcome.html", username=username, listings=listings)
+
+@app.route("/listings/<username>")
+def listings(username):
+    user_listings = Listing.query.filter_by(username=username).all()
+    return render_template("listings.html", username=username, listings=user_listings)
 
 if __name__ == "__main__":
     with app.app_context(): 
