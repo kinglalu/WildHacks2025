@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Listings</title>
+    <title>All Listings</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
         body {
@@ -45,63 +45,30 @@
             text-align: center;
             margin-bottom: 1.5rem;
         }
-        a {
-            display: block;
-            text-align: center;
-            margin-top: 1.5rem;
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
+        .listing-card p {
+            margin: 0.5rem 0;
         }
-        a:hover {
-            text-decoration: underline;
-        }
-        form {
-            margin-bottom: 2rem;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 0.8rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
+        .listing-card .author {
+            color: #555;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <h1>Your Listings</h1>
-        
-        <!-- Add Listing Form -->
-        <form method="POST">
-            <input type="text" name="name" placeholder="Listing Name" required>
-            <textarea name="description" placeholder="Description" required></textarea>
-            <input type="text" name="image_link" placeholder="Image Link" required>
-            <input type="submit" value="Add Listing">
-        </form>
+        <h1>All Listings</h1>
 
         <!-- Listings Grid -->
         <div class="grid-container">
             {% for listing in listings %}
                 <div class="listing-card">
                     <h3>{{ listing.name }}</h3>
+                    <p class="author">By: {{ listing.username }}</p>
                     <p>{{ listing.description }}</p>
                     <img src="{{ listing.image_link }}" alt="{{ listing.name }}">
                 </div>
             {% endfor %}
         </div>
-        <a href="{{ url_for('all_listings') }}">See All Listings</a>
-        <a href="{{ url_for('welcome', username=username) }}">Back to Dashboard</a>
     </div>
 </body>
 </html>

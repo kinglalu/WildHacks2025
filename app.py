@@ -90,6 +90,11 @@ def listings(username):
     user_listings = Listing.query.filter_by(username=username).all()
     return render_template("listings.html", username=username, listings=user_listings)
 
+@app.route("/all_listings")
+def all_listings():
+    all_listings = Listing.query.all()  # Get every listing in the database
+    return render_template("all_listings.html", listings=all_listings)
+
 if __name__ == "__main__":
     with app.app_context(): 
         db.create_all() 
