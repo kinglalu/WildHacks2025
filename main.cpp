@@ -7,6 +7,6 @@ void sendLink() {
 }
 
 int main() {
-    sendLink();  // Call the function to display the link
+    sendLink();
     return 0;
 }
