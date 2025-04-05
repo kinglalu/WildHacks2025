@@ -75,8 +75,18 @@ def welcome(username):
     listings = Listing.query.filter_by(username=username).all()
     return render_template("welcome.html", username=username, listings=listings)
 
-@app.route("/listings/<username>")
+@app.route("/listings/<username>", methods=["GET", "POST"])
 def listings(username):
+    if request.method == "POST":
+        name = request.form["name"]
+        description = request.form["description"]
+        image_link = request.form["image_link"]
+
+        new_listing = Listing(name=name, description=description, image_link=image_link, username=username)
+        db.session.add(new_listing)
+        db.session.commit()
+        flash("Listing added successfully!")
+
     user_listings = Listing.query.filter_by(username=username).all()
     return render_template("listings.html", username=username, listings=user_listings)
 
