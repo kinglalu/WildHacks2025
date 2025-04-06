@@ -91,6 +91,20 @@ def listings(username):
     user_listings = Listing.query.filter_by(username=username).all()
     return render_template("listings.html", username=username, listings=user_listings)
 
+@app.route("/delete_listing/<int:listing_id>", methods=["POST"])
+def delete_listing(listing_id):
+    listing = Listing.query.get_or_404(listing_id)
+    username = session.get('username')
+
+    if listing.username != username:
+        flash("You are not authorized to delete this listing.")
+        return redirect(url_for('listings', username=username))
+
+    db.session.delete(listing)
+    db.session.commit()
+    flash("Listing deleted successfully.")
+    return redirect(url_for('listings', username=username))
+
 @app.route("/all_listings", methods=["GET", "POST"])
 def all_listings():
     username = session.get('username')  # Retrieve username from session
@@ -101,6 +115,7 @@ def all_listings():
     # Get all listings in the database
     all_listings = Listing.query.all()
     return render_template("all_listings.html", username=username, listings=all_listings)
+
 
 
 
