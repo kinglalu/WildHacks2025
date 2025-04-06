@@ -63,6 +63,9 @@ def register():
 
 @app.route("/welcome/<username>", methods=["GET", "POST"])
 def welcome(username):
+    if session['username'] != username:
+        return redirect(url_for('welcome', username=session['username']))
+        
     if request.method == "POST":
         name = request.form["name"]
         description = request.form["description"]
@@ -84,6 +87,9 @@ def logout():
 
 @app.route("/listings/<username>", methods=["GET", "POST"])
 def listings(username):
+    if session['username'] != username:
+        return redirect(url_for('listings', username=session['username']))
+
     if request.method == "POST":
         name = request.form["name"]
         description = request.form["description"]
