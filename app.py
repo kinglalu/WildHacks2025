@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -34,6 +34,7 @@ def login():
     user = User.query.filter_by(username=username).first()
 
     if user and check_password_hash(user.password, password):
+        session['username'] = username  # Store username in session
         return redirect(url_for("welcome", username=username))
     else:
         flash("Invalid login credentials")
@@ -90,10 +91,18 @@ def listings(username):
     user_listings = Listing.query.filter_by(username=username).all()
     return render_template("listings.html", username=username, listings=user_listings)
 
-@app.route("/all_listings")
+@app.route("/all_listings", methods=["GET", "POST"])
 def all_listings():
-    all_listings = Listing.query.all()  # Get every listing in the database
-    return render_template("all_listings.html", listings=all_listings)
+    username = session.get('username')  # Retrieve username from session
+
+    if not username:
+        return redirect(url_for("login_page"))  # Redirect to login if no user is logged in
+
+    # Get all listings in the database
+    all_listings = Listing.query.all()
+    return render_template("all_listings.html", username=username, listings=all_listings)
+
+
 
 if __name__ == "__main__":
     with app.app_context(): 

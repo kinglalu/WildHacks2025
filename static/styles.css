@@ -53,4 +53,16 @@
   input[type="submit"]:hover {
     background-color: #0056b3;
   }
-  
+
+  a {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    }
+    
+  a:hover {
+      text-decoration: underline;
+  }

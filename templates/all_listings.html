@@ -57,7 +57,6 @@
 <body>
     <div class="login-container">
         <h1>All Listings</h1>
-
         <!-- Listings Grid -->
         <div class="grid-container">
             {% for listing in listings %}
@@ -69,6 +68,10 @@
                 </div>
             {% endfor %}
         </div>
+        <a href="{{ url_for('welcome', username=username) }}">Back to Dashboard</a>
+    </div>
+        </div>
+
     </div>
 </body>
 </html>
