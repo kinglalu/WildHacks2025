@@ -66,3 +66,16 @@
   a:hover {
       text-decoration: underline;
   }
+  .logout-btn {
+    background-color: #f32c12;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 1rem;
+    text-align: center;
+}
+.logout-btn:hover {
+    background-color: #cf1800;
+}

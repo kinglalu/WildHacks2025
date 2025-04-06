@@ -76,6 +76,12 @@ def welcome(username):
     listings = Listing.query.filter_by(username=username).all()
     return render_template("welcome.html", username=username, listings=listings)
 
+@app.route("/logout", methods=["POST"])
+def logout():
+    session.pop('username', None)  # Remove username from session
+    flash("You have been logged out successfully!")
+    return redirect(url_for("login_page"))
+
 @app.route("/listings/<username>", methods=["GET", "POST"])
 def listings(username):
     if request.method == "POST":

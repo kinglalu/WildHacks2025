@@ -11,6 +11,9 @@
         <h1>Welcome, {{ username }}!</h1>
         <p>You have successfully logged in.</p>
         <a href="{{ url_for('listings', username=username) }}">View Your Listings</a>
+        <form action="{{ url_for('logout') }}" method="POST">
+            <button type="submit" class="logout-btn">Log Out</button>
+        </form>
     </div>
 </body>
 </html>
