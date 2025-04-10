@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Listings</title>
+    <title>{{ username }}'s Profile</title>
     <link rel="icon" href="{{ url_for('static', filename='fishstick-fornite-shocked-face-tjb9ev8zfgqn26kq.jpg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
@@ -46,45 +46,69 @@
             text-align: center;
             margin-bottom: 1.5rem;
         }
-        .listing-card p {
-            margin: 0.5rem 0;
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
         }
-        .listing-card .author {
-            color: #555;
-            font-size: 0.9rem;
+        a:hover {
+            text-decoration: underline;
         }
-        .author a {
-    display: inline;
-    text-decoration: none;
-    color: #007bff;
-}
-
-.author {
-    display: inline; /* Makes the entire <p> behave like inline text */
-}
+        form {
+            margin-bottom: 2rem;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <h1>All Listings</h1>
+        <h1>{{ username }}'s Profile</h1>
+        
+        <!-- Add Listing Form (If you want users to add their listings) -->
+
         <!-- Listings Grid -->
         <div class="grid-container">
             {% for listing in listings %}
                 <div class="listing-card">
                     <h3>{{ listing.name }}</h3>
-                    <p class="author">
-                        By: <a href="{{ url_for('profile', username=listing.username) }}">{{ listing.username }}</a>
-                    </p>
                     <p>{{ listing.description }}</p>
                     <img src="{{ listing.image_link }}" alt="{{ listing.name }}">
                 </div>
             {% endfor %}
         </div>
-        <a href="{{ url_for('listings', username=username) }}">Your Listings</a>
+        <a href="{{ url_for('all_listings') }}">See All Listings</a>
         <a href="{{ url_for('welcome', username=username) }}">Back to Dashboard</a>
-    </div>
-        </div>
-
     </div>
 </body>
 </html>

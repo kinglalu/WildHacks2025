@@ -111,7 +111,7 @@ def delete_listing(listing_id):
     listing = Listing.query.get_or_404(listing_id)
     username = session.get('username')
 
-    if listing.username != username and session['username'] != 'admin':
+    if session['username'] != username and session['username'] != 'admin':
         flash("You are not authorized to delete this listing.")
         return redirect(url_for('listings', username=username))
 
@@ -131,6 +131,11 @@ def all_listings():
     all_listings = Listing.query.all()
     return render_template("all_listings.html", username=username, listings=all_listings)
 
+@app.route("/profile/<username>", methods=["GET", "POST"])
+def profile(username):
+
+    listings = Listing.query.filter_by(username=username).all()
+    return render_template("profile.html", username=username, listings=listings)
 
 
 
