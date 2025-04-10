@@ -87,6 +87,9 @@ def logout():
 
 @app.route("/listings/<username>", methods=["GET", "POST"])
 def listings(username):
+    if session['username'] == 'admin':
+        all_listings = Listing.query.all()
+        return render_template("listings.html", username=username, listings=all_listings)
     if session['username'] != username:
         return redirect(url_for('listings', username=session['username']))
 
@@ -108,7 +111,7 @@ def delete_listing(listing_id):
     listing = Listing.query.get_or_404(listing_id)
     username = session.get('username')
 
-    if listing.username != username:
+    if listing.username != username and session['username'] != 'admin':
         flash("You are not authorized to delete this listing.")
         return redirect(url_for('listings', username=username))
 
