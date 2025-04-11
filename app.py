@@ -128,13 +128,16 @@ def listings(username):
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            upload_folder = app.config['UPLOAD_FOLDER']
+            
+            # Use absolute path to upload folder
+            upload_folder = os.path.join(app.root_path, 'static', 'uploads')
             if not os.path.exists(upload_folder):
                 os.makedirs(upload_folder)
 
             file_path = os.path.join(upload_folder, filename)
             file.save(file_path)
 
+            # Image link used in HTML is still relative to /static
             image_link = url_for('static', filename='uploads/' + filename)
 
             new_listing = Listing(
@@ -151,6 +154,7 @@ def listings(username):
 
     user_listings = Listing.query.filter_by(username=username).all()
     return render_template("listings.html", username=username, listings=user_listings)
+
 
 @app.route("/delete_listing/<int:listing_id>", methods=["POST"])
 def delete_listing(listing_id):
