@@ -87,6 +87,28 @@
         .like-form button:hover {
             color: #f02b71;  /* Hover color */
         }
+        .dislike-form button {
+            font-size: 1.5rem;
+            padding: 8px;
+            border: none;  /* Removes the border around the button */
+            background: none;  /* Removes the background color */
+            color: gray;  /* Default color when the button is not disliked */
+            cursor: pointer;  /* Makes the button clickable */
+            transition: color 0.3s ease;  /* Smooth transition for color change */
+            outline: none;  /* Removes the outline around the button (usually appears when clicked) */
+        }
+
+        .dislike-form button.disliked {
+            color: rgb(212, 0, 0);  /* Color when disliked */
+        }
+
+        .dislike-form button.unliked {
+            color: initial;  /* Default color when not disliked */
+        }
+
+        .dislike-form button:hover {
+            color: rgb(253, 133, 133);  /* Optional: hover effect */
+        }
     </style>
 </head>
 <body>
@@ -103,14 +125,30 @@
                     <p>{{ listing.description }}</p>
                     <img src="{{ listing.image_link }}" alt="{{ listing.name }}">
                     
-                    <p><strong>Likes:</strong> {{ listing.likes.count() }}</p>
+                    <p>
+                        <strong style="margin-right: 10px;">Likes:</strong> {{ listing.likes.count() }}
+                        <strong style="margin-left: 20px; margin-right: 10px;">Bozo:</strong> {{ listing.dislikes.count() }}
+                    </p>
+                        
+                    <div class="button-container" style="display: flex; justify-content: center; align-items: center; width: 100%; gap: 45px;">
+                        <!-- Like Button -->
+                        {% set liked = listing.likes.filter_by(user=username).first() %}
+                        <form method="POST" action="{{ url_for('unlike_listing' if liked else 'like_listing', listing_id=listing.id) }}" class="like-form" style="display: inline-block;">
+                            <button type="submit" class="{{ 'liked' if liked else 'unliked' }}" style="font-size: 2.5rem; padding: 8px;">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </form>
+                        
+                        <!-- Dislike Button -->
+                        {% set disliked = listing.dislikes.filter_by(user=username).first() %}
+                        <form method="POST" action="{{ url_for('undislike_listing' if disliked else 'dislike_listing', listing_id=listing.id) }}" class="dislike-form" style="display: inline-block;">
+                            <button type="submit" class="{{ 'disliked' if disliked else 'unliked' }}">
+                                <i class="fas fa-thumbs-down"></i>
+                            </button>
+                        </form>
 
-                    {% set liked = listing.likes.filter_by(user=username).first() %}
-                    <form method="POST" action="{{ url_for('unlike_listing' if liked else 'like_listing', listing_id=listing.id) }}" class="like-form">
-                        <button type="submit" class="{{ 'liked' if liked else 'unliked' }}">
-                            <i class="fas fa-heart"></i> <!-- Font Awesome Heart Icon -->
-                        </button>
-                    </form>
+                    </div>
+                    
                 </div>
             {% endfor %}
         </div>

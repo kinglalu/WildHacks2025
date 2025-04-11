@@ -22,6 +22,9 @@ class Listing(db.Model):
     username = db.Column(db.String(80), nullable=False)
 
     likes = db.relationship('Like', back_populates='listing', lazy='dynamic')
+    dislikes = db.relationship('Dislike', back_populates='listing', lazy='dynamic')  
+
+
 
 
 class Like(db.Model):
@@ -30,6 +33,14 @@ class Like(db.Model):
     listing_id = db.Column(db.Integer, db.ForeignKey('listing.id'), nullable=False)
 
     listing = db.relationship('Listing', back_populates='likes')
+
+class Dislike(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.Column(db.String(80), nullable=False)
+    listing_id = db.Column(db.Integer, db.ForeignKey('listing.id'), nullable=False)
+
+    listing = db.relationship('Listing', back_populates='dislikes')
+
 
 
 @app.route("/")
@@ -172,6 +183,33 @@ def unlike_listing(listing_id):
     like = Like.query.filter_by(user=username, listing_id=listing_id).first()
     if like:
         db.session.delete(like)
+        db.session.commit()
+    
+    return redirect(request.referrer or url_for("all_listings"))
+
+@app.route("/dislike/<int:listing_id>", methods=["POST"])
+def dislike_listing(listing_id):
+    username = session.get("username")
+    if not username:
+        return redirect(url_for("login_page"))
+
+    existing_dislike = Dislike.query.filter_by(user=username, listing_id=listing_id).first()
+    if not existing_dislike:
+        dislike = Dislike(user=username, listing_id=listing_id)
+        db.session.add(dislike)
+        db.session.commit()
+    
+    return redirect(request.referrer or url_for("all_listings"))
+
+@app.route("/undislike/<int:listing_id>", methods=["POST"])
+def undislike_listing(listing_id):
+    username = session.get("username")
+    if not username:
+        return redirect(url_for("login_page"))
+
+    dislike = Dislike.query.filter_by(user=username, listing_id=listing_id).first()
+    if dislike:
+        db.session.delete(dislike)
         db.session.commit()
     
     return redirect(request.referrer or url_for("all_listings"))
