@@ -124,16 +124,19 @@ def listings(username):
     if request.method == "POST":
         name = request.form["name"]
         description = request.form["description"]
-        file = request.files.get("image_file")  # Get the file input field
+        file = request.files.get("image_file")
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            upload_folder = app.config['UPLOAD_FOLDER']
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
+
+            file_path = os.path.join(upload_folder, filename)
             file.save(file_path)
 
-            image_link = f"/static/uploads/{filename}"  # Store the relative URL in the database
+            image_link = url_for('static', filename='uploads/' + filename)
 
-            # Add the new listing with the image
             new_listing = Listing(
                 name=name,
                 description=description,
