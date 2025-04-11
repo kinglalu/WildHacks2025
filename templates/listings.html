@@ -110,7 +110,10 @@
                     <h3>{{ listing.name }}</h3>
                     <p>{{ listing.description }}</p>
                     <img src="{{ listing.image_link }}" alt="{{ listing.name }}">
-                    <p><strong>Likes:</strong> {{ listing.likes.count() }}</p>
+                    <p>
+                        <strong style="margin-right: 10px;">Likes:</strong> {{ listing.likes.count() }}
+                        <strong style="margin-left: 20px; margin-right: 10px;">Bozo:</strong> {{ listing.dislikes.count() }}
+                    </p>
                     <form action="{{ url_for('delete_listing', listing_id=listing.id) }}" method="POST">
                         <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this listing?')">Delete</button>
                     </form>
