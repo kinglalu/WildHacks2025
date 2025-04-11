@@ -186,6 +186,7 @@ def delete_listing(listing_id):
     return redirect(url_for('listings', username=username))
 
 
+
 @app.route("/all_listings", methods=["GET", "POST"])
 def all_listings():
     username = session.get('username')  # Retrieve username from session
