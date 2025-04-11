@@ -1,13 +1,16 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB
 db = SQLAlchemy(app)
-
 migrate = Migrate(app, db)
 
 class User(db.Model):
@@ -40,7 +43,11 @@ class Dislike(db.Model):
 
     listing = db.relationship('Listing', back_populates='dislikes')
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
 
+if not os.path.exists('static/uploads'):
+    os.makedirs('static/uploads')
 
 @app.route("/")
 def login_page():
@@ -110,18 +117,34 @@ def listings(username):
     if session['username'] == 'admin':
         all_listings = Listing.query.all()
         return render_template("listings.html", username=username, listings=all_listings)
+
     if session['username'] != username:
         return redirect(url_for('listings', username=session['username']))
 
     if request.method == "POST":
         name = request.form["name"]
         description = request.form["description"]
-        image_link = request.form["image_link"]
+        file = request.files.get("image_file")  # Get the file input field
 
-        new_listing = Listing(name=name, description=description, image_link=image_link, username=username)
-        db.session.add(new_listing)
-        db.session.commit()
-        flash("Listing added successfully!")
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+
+            image_link = f"/static/uploads/{filename}"  # Store the relative URL in the database
+
+            # Add the new listing with the image
+            new_listing = Listing(
+                name=name,
+                description=description,
+                image_link=image_link,
+                username=username
+            )
+            db.session.add(new_listing)
+            db.session.commit()
+            flash("Listing added successfully!", "success")
+        else:
+            flash("Invalid file type. Please upload a valid image.", "danger")
 
     user_listings = Listing.query.filter_by(username=username).all()
     return render_template("listings.html", username=username, listings=user_listings)
@@ -140,12 +163,21 @@ def delete_listing(listing_id):
     Like.query.filter_by(listing_id=listing.id).delete()
     Dislike.query.filter_by(listing_id=listing.id).delete()
 
+    # Delete the image associated with the listing
+    image_filename = listing.image_link.split('/')[-1]  # Extract the filename from the URL
+    image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], image_filename)
+
+    # Check if the file exists and remove it
+    if os.path.exists(image_path):
+        os.remove(image_path)
+
     # Delete the listing itself
     db.session.delete(listing)
     db.session.commit()
 
-    flash("Listing deleted successfully.")
+    flash("Listing and image deleted successfully.")
     return redirect(url_for('listings', username=username))
+
 
 @app.route("/all_listings", methods=["GET", "POST"])
 def all_listings():

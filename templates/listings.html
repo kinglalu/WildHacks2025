@@ -135,6 +135,35 @@
         .dislike-form button:hover {
             color: rgb(253, 133, 133);  /* Optional: hover effect */
         }
+
+        #drop-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        #drop-area.hover {
+            border-color: #007bff;
+        }
+
+        #fileElem {
+            display: none;
+        }
+
+        .file-feedback {
+            margin-top: 1rem;
+            color: #007bff;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            margin-top: 1rem;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -142,10 +171,14 @@
         <h1>Your Listings</h1>
         
         <!-- Add Listing Form -->
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <input type="text" name="name" placeholder="Listing Name" required>
             <textarea name="description" placeholder="Description" required></textarea>
-            <input type="text" name="image_link" placeholder="Image Link" required>
+            <div id="drop-area">
+                <p>Drag & Drop an image here or click to select</p>
+                <input type="file" name="image_file" id="fileElem" accept="image/*" required>
+            </div>
+            <div id="file-feedback" class="file-feedback"></div>
             <input type="submit" value="Add Listing">
         </form>
 
@@ -190,5 +223,62 @@
         <a href="{{ url_for('all_listings') }}">See All Listings</a>
         <a href="{{ url_for('welcome', username=username) }}">Back to Dashboard</a>
     </div>
+    <script>
+const dropArea = document.getElementById("drop-area");
+const fileInput = document.getElementById("fileElem");
+const fileFeedback = document.getElementById("file-feedback");
+
+dropArea.addEventListener("click", () => fileInput.click());
+
+dropArea.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropArea.classList.add("hover");
+});
+
+dropArea.addEventListener("dragleave", () => {
+    dropArea.classList.remove("hover");
+});
+
+dropArea.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropArea.classList.remove("hover");  // Remove hover class when file is dropped
+    const file = e.dataTransfer.files[0];
+    fileInput.files = e.dataTransfer.files;
+    showFileFeedback(file);
+    hideDropArea();  // Hide the drop area after file is dropped
+});
+
+fileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    showFileFeedback(file);
+    hideDropArea();  // Hide the drop area after file is selected
+});
+
+function showFileFeedback(file) {
+    if (file) {
+        fileFeedback.textContent = `Selected file: ${file.name}`;
+        
+        // If it's an image, show a preview
+        if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const previewImage = document.createElement("img");
+                previewImage.src = event.target.result;
+                previewImage.classList.add("image-preview");
+                fileFeedback.appendChild(previewImage);
+            };
+            reader.readAsDataURL(file);
+        }
+    } else {
+        fileFeedback.textContent = "";
+    }
+}
+
+function hideDropArea() {
+    dropArea.style.display = "none";  // Hide the drop area when a file is added
+}
+
+
+    </script>
 </body>
 </html>
