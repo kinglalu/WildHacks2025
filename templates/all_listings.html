@@ -6,6 +6,7 @@
     <title>All Listings</title>
     <link rel="icon" href="{{ url_for('static', filename='fishstick-fornite-shocked-face-tjb9ev8zfgqn26kq.jpg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             margin: 0;
@@ -54,14 +55,38 @@
             font-size: 0.9rem;
         }
         .author a {
-    display: inline;
-    text-decoration: none;
-    color: #007bff;
-}
+            display: inline;
+            text-decoration: none;
+            color: #007bff;
+        }
+        .author {
+            display: inline;
+        }
 
-.author {
-    display: inline; /* Makes the entire <p> behave like inline text */
-}
+        /* Styling for the heart like/unlike button */
+        .like-form {
+            margin-top: 0.5rem;
+        }
+        .like-form button {
+            background: none;
+            border: none;
+            font-size: 2rem; /* Size of the heart */
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.3s ease;
+        }
+
+        .like-form button.liked {
+            color: #f02b71;  /* Color when liked */
+        }
+
+        .like-form button.unliked {
+            color: #ccc;  /* Color when unliked */
+        }
+
+        .like-form button:hover {
+            color: #f02b71;  /* Hover color */
+        }
     </style>
 </head>
 <body>
@@ -77,14 +102,20 @@
                     </p>
                     <p>{{ listing.description }}</p>
                     <img src="{{ listing.image_link }}" alt="{{ listing.name }}">
+                    
+                    <p><strong>Likes:</strong> {{ listing.likes.count() }}</p>
+
+                    {% set liked = listing.likes.filter_by(user=username).first() %}
+                    <form method="POST" action="{{ url_for('unlike_listing' if liked else 'like_listing', listing_id=listing.id) }}" class="like-form">
+                        <button type="submit" class="{{ 'liked' if liked else 'unliked' }}">
+                            <i class="fas fa-heart"></i> <!-- Font Awesome Heart Icon -->
+                        </button>
+                    </form>
                 </div>
             {% endfor %}
         </div>
         <a href="{{ url_for('listings', username=username) }}">Your Listings</a>
         <a href="{{ url_for('welcome', username=username) }}">Back to Dashboard</a>
-    </div>
-        </div>
-
     </div>
 </body>
 </html>

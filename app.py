@@ -19,7 +19,17 @@ class Listing(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     image_link = db.Column(db.String(200), nullable=False)
-    username = db.Column(db.String(80), nullable=False)  # To associate the listing with the user
+    username = db.Column(db.String(80), nullable=False)
+
+    likes = db.relationship('Like', back_populates='listing', lazy='dynamic')
+
+
+class Like(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.Column(db.String(80), nullable=False)
+    listing_id = db.Column(db.Integer, db.ForeignKey('listing.id'), nullable=False)
+
+    listing = db.relationship('Listing', back_populates='likes')
 
 
 @app.route("/")
@@ -133,9 +143,37 @@ def all_listings():
 
 @app.route("/profile/<username>", methods=["GET", "POST"])
 def profile(username):
-
     listings = Listing.query.filter_by(username=username).all()
-    return render_template("profile.html", username=username, listings=listings)
+    liked_listings = [listing.id for listing in listings if Like.query.filter_by(user=username, listing_id=listing.id).first()]
+    return render_template("profile.html", username=username, listings=listings, liked_listings=liked_listings)
+
+
+@app.route("/like/<int:listing_id>", methods=["POST"])
+def like_listing(listing_id):
+    username = session.get("username")
+    if not username:
+        return redirect(url_for("login_page"))
+
+    existing_like = Like.query.filter_by(user=username, listing_id=listing_id).first()
+    if not existing_like:
+        like = Like(user=username, listing_id=listing_id)
+        db.session.add(like)
+        db.session.commit()
+    
+    return redirect(request.referrer or url_for("all_listings"))
+
+@app.route("/unlike/<int:listing_id>", methods=["POST"])
+def unlike_listing(listing_id):
+    username = session.get("username")
+    if not username:
+        return redirect(url_for("login_page"))
+
+    like = Like.query.filter_by(user=username, listing_id=listing_id).first()
+    if like:
+        db.session.delete(like)
+        db.session.commit()
+    
+    return redirect(request.referrer or url_for("all_listings"))
 
 
 
