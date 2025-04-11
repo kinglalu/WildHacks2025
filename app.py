@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -7,8 +8,7 @@ app.secret_key = "supersecretkey"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
 db = SQLAlchemy(app)
 
-if __name__ == "__main__":
-    app.run(debug=True)
+migrate = Migrate(app, db)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,9 +25,6 @@ class Listing(db.Model):
 
     likes = db.relationship('Like', back_populates='listing', lazy='dynamic')
     dislikes = db.relationship('Dislike', back_populates='listing', lazy='dynamic')  
-
-
-
 
 class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True)
