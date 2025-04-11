@@ -129,29 +129,23 @@ def listings(username):
 @app.route("/delete_listing/<int:listing_id>", methods=["POST"])
 def delete_listing(listing_id):
     listing = Listing.query.get_or_404(listing_id)
-    username = session.get('username')  # Retrieve username from session
+    username = session.get('username')
 
-    # Check if the current user is the owner or an admin
+    # Check if the current user is the owner or admin
     if session['username'] != listing.username and session['username'] != 'admin':
         flash("You are not authorized to delete this listing.")
-        return redirect(url_for('listings', username=username))  # Redirect to listings page
+        return redirect(url_for('listings', username=username))
 
-    # Optional: If you want to delete associated likes/dislikes (if they exist)
-    # Remove likes and dislikes by the current user
-    liked = Like.query.filter_by(listing_id=listing.id, user=username).first()
-    disliked = Dislike.query.filter_by(listing_id=listing.id, user=username).first()
+    # Delete all likes/dislikes related to this listing
+    Like.query.filter_by(listing_id=listing.id).delete()
+    Dislike.query.filter_by(listing_id=listing.id).delete()
 
-    if liked:
-        db.session.delete(liked)
-    if disliked:
-        db.session.delete(disliked)
-
-    # Delete the listing
+    # Delete the listing itself
     db.session.delete(listing)
     db.session.commit()
 
     flash("Listing deleted successfully.")
-    return redirect(url_for('listings', username=username))  # Redirect to listings page
+    return redirect(url_for('listings', username=username))
 
 @app.route("/all_listings", methods=["GET", "POST"])
 def all_listings():
