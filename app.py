@@ -172,7 +172,8 @@ def delete_listing(listing_id):
 
     # Delete the image associated with the listing
     image_filename = listing.image_link.split('/')[-1]  # Extract the filename from the URL
-    image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], image_filename)
+    upload_folder = os.path.join(app.root_path, 'static', 'uploads')
+    image_path = os.path.join(upload_folder, image_filename)
 
     # Check if the file exists and remove it
     if os.path.exists(image_path):
