@@ -130,10 +130,10 @@
                     <img src="{{ listing.image_link }}" alt="{{ listing.name }}">
                     <p><strong>Likes:</strong> {{ listing.likes.count() }}</p>
 
-                    {% set liked = listing.likes.filter_by(user=username).first() %}
+                    {% set liked = listing.likes.filter_by(user=current_user).first() %}
                     <form method="POST" action="{{ url_for('unlike_listing' if liked else 'like_listing', listing_id=listing.id) }}" class="like-form">
                         <button type="submit" class="{{ 'liked' if liked else 'unliked' }}">
-                            <i class="fas fa-heart"></i> <!-- Font Awesome Heart Icon -->
+                            <i class="fas fa-heart"></i>
                         </button>
                     </form>
                 </div>

@@ -141,11 +141,12 @@ def all_listings():
     all_listings = Listing.query.all()
     return render_template("all_listings.html", username=username, listings=all_listings)
 
-@app.route("/profile/<username>", methods=["GET", "POST"])
+@app.route("/profile/<username>")
 def profile(username):
     listings = Listing.query.filter_by(username=username).all()
-    liked_listings = [listing.id for listing in listings if Like.query.filter_by(user=username, listing_id=listing.id).first()]
-    return render_template("profile.html", username=username, listings=listings, liked_listings=liked_listings)
+    current_user = session.get("username")  # get the logged-in user
+
+    return render_template("profile.html", username=username, listings=listings, current_user=current_user)
 
 
 @app.route("/like/<int:listing_id>", methods=["POST"])
