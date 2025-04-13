@@ -149,7 +149,7 @@
                 <div class="listing-card">
                     <h3>{{ listing.name }}</h3>
                     <p>{{ listing.description }}</p>
-                    <img src="{{ listing.image_link }}" alt="{{ listing.name }}">
+                    <a href = "{{ listing.image_link }}"><img src="{{ listing.image_link }}" alt="{{ listing.name }}"></a>
                     <p>
                         <strong style="margin-right: 10px;">Likes:</strong> {{ listing.likes.count() }}
                         <strong style="margin-left: 20px; margin-right: 10px;">Bozo:</strong> {{ listing.dislikes.count() }}
