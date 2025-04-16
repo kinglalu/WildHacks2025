@@ -1,0 +1,22 @@
+.dislike-form button {
+    font-size: 1.5rem;
+    padding: 8px;
+    border: none;  /* Removes the border around the button */
+    background: none;  /* Removes the background color */
+    color: gray;  /* Default color when the button is not disliked */
+    cursor: pointer;  /* Makes the button clickable */
+    transition: color 0.3s ease;  /* Smooth transition for color change */
+    outline: none;  /* Removes the outline around the button (usually appears when clicked) */
+}
+
+.dislike-form button.disliked {
+    color: rgb(212, 0, 0);  /* Color when disliked */
+}
+
+.dislike-form button.unliked {
+    color: initial;  /* Default color when not disliked */
+}
+
+.dislike-form button:hover {
+    color: rgb(253, 133, 133);  /* Optional: hover effect */
+}

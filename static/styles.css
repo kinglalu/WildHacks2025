@@ -79,3 +79,46 @@
 .logout-btn:hover {
     background-color: #cf1800;
 }
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 1rem;
+}
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+
+
+#drop-area {
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+#drop-area.hover {
+  border-color: #007bff;
+}
+
+#fileElem {
+  display: none;
+}
+
+.file-feedback {
+  margin-top: 1rem;
+  color: #007bff;
+}
+
+.image-preview {
+  max-width: 100%;
+  margin-top: 1rem;
+  border-radius: 5px;
+}

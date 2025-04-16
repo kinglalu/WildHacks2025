@@ -1,0 +1,54 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+.login-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 2rem;
+}
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+.listing-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.listing-card img {
+    max-width: 100%;
+    border-radius: 5px;
+}
+h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+.listing-card p {
+    margin: 0.5rem 0;
+}
+.listing-card .author {
+    color: #555;
+    font-size: 0.9rem;
+}
+.author a {
+    display: inline;
+    text-decoration: none;
+    color: #007bff;
+}
+.author {
+    display: inline;
+}
